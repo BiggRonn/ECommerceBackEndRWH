@@ -14,6 +14,19 @@ router.get('/', (req, res) => {
 router.get('/:id', (req, res) => {
   // find a single product by its `id`
   // be sure to include its associated Category and Tag data
+  Product.findAll({
+    // Order by title in ascending order
+    order: ['product_name'],
+    where: {
+      // Only get books that have this boolean set to TRUE
+      id: res.body.id
+    },
+    attributes: {
+      //attributes here...none?
+    }
+  }).then((pData) => {
+    res.json(pData);
+  });
 });
 
 // create new product
