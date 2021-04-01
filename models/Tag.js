@@ -15,7 +15,10 @@ Tag.init(
     },
     product_id : {
       type: DataTypes.INTEGER,
-      //needs a foreignKey here to reference the product
+      references: {
+        model: "product",
+        key: "id"
+      }
     }
   },
   {
