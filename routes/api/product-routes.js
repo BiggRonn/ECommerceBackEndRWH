@@ -14,27 +14,30 @@ router.get('/', (req, res) => {
 router.get('/:id', async (req, res) => {
   // find a single product by its `id`
   // be sure to include its associated Category and Tag data
-  const pData = await Product.findAll({
-    // Order by title in ascending order
-    include: [{ model: Tag }],
-    order: ['product_name'],
-    where: {
-      
-      id: res.body.id,
-    },
-  })
-    res.json(pData);
-  ;
+  try {
+    const proData = await Product.findByPk(req.params.id, {
+      include: [{ model: Category },{ model: Tag}],
+    });
+
+    if (!proData) {
+      res.status(404).json({ message: 'No Category found with that id!' });
+      return;
+    }
+
+    res.status(200).json(proData);
+  } catch (err) {
+    res.status(500).json(err);
+  }
 });
 
 // create new product
 router.post('/', (req, res) => {
   /* req.body should look like this...
     {
-      product_name: "Basketball",
-      price: 200.00,
-      stock: 3,
-      tagIds: [1, 2, 3, 4]
+      "product_name": "Basketball",
+      "price": 200.00,
+      "stock": 3,
+      "category_id": 1
     }
   */
   Product.create(req.body)
@@ -110,7 +113,7 @@ router.delete('/:id', async (req, res) => {
       },
     });
 
-    if (!catData) {
+    if (!proData) {
       res.status(404).json({ message: 'No Product found with that id!' });
       return;
     }
